@@ -10,11 +10,13 @@
 template <typename T,typename U>
 T find(T& begin,T&end,const U& val);
 ```
-为啥 出现
+编译器报错
 `auto result=find(test1.begin(),test1.end(),1);`
 
+[参考](https://github.com/Mooophy/Cpp-Primer/issues/381)
 **编译器版本**　将Ｃ++11 ->C＋＋！１４
 
-这个错误很更要
  `error: cannot bind non-const lvalue reference of type ‘int&’ to an rvalue of type ‘int’
      auto result=find(test1.begin(),test1.end(),1);`
+ 原因是传入实参为`rvalue`,而模板签名里面形参为引用类型，引用必须指向lvalue
+ 详细请[阅读此文章](https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c)
