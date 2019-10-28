@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10)
+project(max_template C CXX)
+set(CXX_STANDARD 14)
+aux_source_directory(. src_dir)
+add_library(max ${src_dir})
