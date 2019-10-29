@@ -29,6 +29,40 @@ typename T::value_type top(const T&c) //显式指出返回值为类型
 
 与函数默认实参一样，对于模板参数，只有当他右侧的所有参数都有默认实参时候，他才可以有默认实参。
 
+#### 16.1.4成员模板(595)
+作为例子，定义了一个类，类似`unique_ptr`所使用的默认删除器类型
+```
+class deleteptr
+{
+public:
+    deletptr(ostream &s=std::cerr):os(s){} //默认构造函数，默认输出错误流参数
+    template<typename T> void operator()(T*p) const
+    {
+        os<<"delete unique_ptr"<<endl;
+        delete p;
+    }
+private:
+    ostream &os;
+}
+```
+回过头来看`unique_ptr`实现(P417)
+
+某个时刻只有一个unique_ptr指向一个对象，当unique_ptr被销毁，所指向对象也被销毁。
+
+由于一个unique_ptr拥有其所指对象，因此unqiue_ptr不支持普通拷贝，赋值操作
+
+但可以通过release(),reset([q])，来转移指针的所有权
+
+unique_ptr的一些操作:
+
+`unique_ptr<T>u1` //空unique_ptr 默认使用delete来释放它的指针
+`unique_ptr<T,D>p()` //使用类型为D的可调用对象来释放指针
+
+有了这些铺垫之后，就可以看看，如何用我们写的成员模板作为`unique_ptr`的删除器
+```
+unique_ptr<int,deleteptr>p(new int,deleteptr());//申明p的删除器类型为deleteptr,并在构造函数中提供了该类型的一个未命名对象
+```
+
 
 -----------------------
 
