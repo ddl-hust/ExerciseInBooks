@@ -1,0 +1,1 @@
+const int * int 为常量表达式　，右值

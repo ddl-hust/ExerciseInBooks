@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.10)
+project(max_template)
+set(CXX_STANDARD 14)
+ADD_SUBDIRECTORY(src)
+add_executable(main main.cpp)
+target_link_libraries(main max)
