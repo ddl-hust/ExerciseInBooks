@@ -67,3 +67,60 @@ typename T::value_type top(const T&c) //显式指出返回值为类型
 
 
 函数参数类型不是模板参数，实参能过进行正常的类型转换(算术转化，派生类->基类，自定义转换等都可以)
+
+--------
+１０/29　星期二
+
+#### 函数指针与实参推断
+
+函数指针指向函数，非对象，申明一个指向函数的指针，只需要用指针替换函数名：
+
+`bool compare(cosnt string& s1,const string&s2);//函数`
+`bool (*pf)(const string&s1,const string&s2);//函数指针`
+
+**NOTE**:
+函数指针名两边的()不可少，去掉则表示函数返回为`bool`指针的函数
+
+
+#### 理解std::move
+标准库里面`move`的定义还是很subtle
+```
+template<typename T>
+typename remove_reference<T>::type &&move(T&& t)
+{
+    return static_cast<typename remove_reference<T>::type&&>(t);
+}
+```
+来分析下如果传入一个左值，如何通过move得到右值
+
+`string s1("ddl"),s2`;
+
+`s2=std::move(s1)`
+首先s1为左值实参，模板类型参数Ｔ被推断为`string&`,
+因此返回类型就为`T&&`(remove_reference去掉了&)
+再看里面实现，就是用`static_cast`做了静态类型转化。
+一般来说,`static_cast`只能用于其他合法的类型转换，但针对右值引用有一条**特例**: 显式的将一个左值转化为右值引用。就像std::move里面做的,在<>里面显式给出。
+
+>`static_cast`：只要不包含底层const，任何具有明确定义的类型转换都可以用static_cast。
+这句话什么意思？如果包含了底层const会报什么错？底层const 表示指针所指对象为const
+我写了个测试：
+```
+const int ci=i;
+const int *  pi=&ci;
+auto res= static_cast<int*>(pi);
+```
+ `error: invalid static_cast from type ‘const int*’ to type ‘int*’`
+
+顶层常量做`static_cast`没有影响
+```
+const double d=2.0;
+auto res= static_cast<double>(d);
+```
+#### 动态内存管理类(P464)
+在本节课后练习里面解释下面循环语句的作用：
+```
+for(size_t i=0;i!=size();++i)
+    alloc.construct(dest++,std::move(*elem++));
+```
+这句话是在干什么呢？表示在dest指向的内存空间，用elem指向的元素构造对象，之所以使用move()，为了将左值转化为右值引用，从而调用移动构造函数，减小内存开销。
+
