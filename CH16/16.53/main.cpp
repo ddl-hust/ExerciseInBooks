@@ -1,27 +1,27 @@
-#include<iostream>
+#include <iostream>
 using std::cout;
 using std::endl;
 /*
-*编写自己版本的print(),输出可变参数
+*缂栧啓鑷繁鐗堟湰鐨刾rint(),杈撳嚭鍙彉鍙傛暟
 */
 
-//非可变参数版本print(),相当于递归调用的base case
-template<typename T>
-std::ostream& print(std::ostream&os ,const T& t)
+//闈炲彲鍙樺弬鏁扮増鏈琾rint(),鐩稿綋浜庨�掑綊璋冪敤鐨刡ase case
+template <typename T>
+std::ostream &print(std::ostream &os, const T &t)
 {
 	return os << t << end;
 }
 
-template<typename T,typename ... Arg>
-std::ostream& print(std::ostream& os,const T& t,const Arg&... arg)
+template <typename T, typename... Arg>
+std::ostream &print(std::ostream &os, const T &t, const Arg &... arg)
 {
 	os << t << " , ";
-	return print(os, arg...); //递归调用，参数包每次递减
+	return print(os, arg...); //閫掑綊璋冪敤锛屽弬鏁板寘姣忔閫掑噺
 }
 
 int main()
 {
 	print(std::cout, 1);
-	print(std::cout,1, 2, "123");
+	print(std::cout, 1, 2, "123");
 	system("pause");
 }
