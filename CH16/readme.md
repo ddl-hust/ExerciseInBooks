@@ -167,3 +167,23 @@ for(size_t i=0;i!=size();++i)
 1.`share_ptr`需要管理引用计数,因此在拷贝构造，拷贝赋值的时候，需要将引用计数加一，
 
 2.在析构时候也需要注意
+
+#### 可变模板参数
+申明：用省略号(...)表示可变参数
+```
+template <typename T, typename... Args>
+void foo(const T &t, const Args& ... rest);
+foo("hi"); // empty pack
+//上面的foo()会实例化成下面版本
+void foo(const char[3]&); 
+```
+使用`sizeof...(args)`可以得到可变参数个数,返回一个常量表达式。
+> 常量表达式：is an expression whose value cannot change and that can be
+evaluated at compile time.
+
+常量表达式在编译是就已经确定，
+```
+int staff_size = 27; // staff_size is not a constant expression
+const int sz = get_size(); // sz is not a constant expression
+```
+写了练习，一定要注意const，当实参为右值时候,const int & 能够绑定
