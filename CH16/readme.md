@@ -187,3 +187,30 @@ int staff_size = 27; // staff_size is not a constant expression
 const int sz = get_size(); // sz is not a constant expression
 ```
 写了练习，一定要注意const，当实参为右值时候,const int & 能够绑定
+
+
+------
+2019年10月31日  星期四
+
+将之前动态内存管理类重写为模板，并添加emplace_back()P464
+
+#### 模板特例化
+为什么要特例化
+特例化形式：
+`template<>`<>表示我们将为原来模板的所有参数提供实参
+
+类模板的偏特化
+>对于类模板的特例化，我们可以只指定部分实参，而不必要像函数模板的特例化一样，指定全部实参
+类模板的部分特例化，本身就是一个模板。也可以特例化参数的一部分特性(&,&&)
+
+定义自己版本的无序容器，hash<Sale_data>,关键字key
+sale_data 是之前类章节里面的，首先需要定义自己的sale_data类
+
+做练习16.62时候出现的错误：
+`error C3848: 具有类型“const std::hash<Sales_data>”的表达式会丢失一些 const-volatile 限定符以调用“size_t std::hash<Sales_data>::operator ()(const Sales_data &)”`
+
+` size_t operator()(const Sales_data &s) const;`
+我忘了加 const 导致传入的实参 const属性丢失.
+
+
+
