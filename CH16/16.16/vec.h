@@ -24,6 +24,9 @@ public:
 
     T *begin() { return elements; }
     T *end() { return first_free; }
+    //emplace_back()
+    template<typename ... Args>
+    void emplace_back(Args&&...);
 
 private:
     T *elements;
@@ -59,3 +62,10 @@ void vec<T>::reallocate()
     cap=elements+newcap;
 }
 
+template<typename T>
+template<typename Args ...>
+void vec<T>::emplace_back(Args&&... res)
+{
+    cnk_n_alloc();
+    alloc.construct(first_free++,std::forward<Args>(res)...);
+}

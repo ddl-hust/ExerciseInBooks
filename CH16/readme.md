@@ -5,6 +5,7 @@ eg. `typedef std::string::size_type pos`
  
 也可以等价使用
 `using pos=std::string::size_type`
+
 2. 类型成员必须先定义后使用；(why)
 
 3. 使用类的类型成员
@@ -14,7 +15,7 @@ eg. `typedef std::string::size_type pos`
 `T::size_type * p`
 这个语句就有歧义，编译器不知道我们是定义一个　名为ｐ的指针变量，还是将静态数据成员与p相乘。
 
-默认情况下，Ｃ++嘉定通过作用域运算符访问的名字不是类型，因此如果我们希望使用模板类型参数的类型成员，
+默认情况下，Ｃ++假定通过作用域运算符访问的名字不是类型，因此如果我们希望使用模板类型参数的类型成员，
 必须显式指出。通过关键字`typename` 来实现：
 ```
 template<typename T>
@@ -45,7 +46,7 @@ private:
     ostream &os;
 }
 ```
-回过头来看`unique_ptr`实现(P417)
+回过头来看[unique_ptr](16.28_unique_ptr/unique_ptr.h)实现(P417)
 
 某个时刻只有一个unique_ptr指向一个对象，当unique_ptr被销毁，所指向对象也被销毁。
 
@@ -74,7 +75,7 @@ unique_ptr<int,deleteptr>p(new int,deleteptr());//申明p的删除器类型为de
 > 顶层`const`无论在形参还是实参，都会被忽略
 
 这句话什么意思呢？(P57)
-指针本身是一个对象，又可以指向一个对象，也就是指针本身是否为常量与所指对象是否常量相互独立。用*顶层`const`(top level const)*表示指针本身为常量。更为一般的，顶层const可以表示任意的对象为常量。
+指针本身是一个对象，又可以指向一个对象，也就是指针本身是否为常量与所指对象是否常量相互独立。用**顶层 `const `(top level const)** 表示指针本身为常量。更为一般的，顶层const可以表示任意的对象为常量。
 相对的`底层const`表示指针所指对象为常量。这两个的具体区别在执行拷贝操作时有很大区别：
 
     1. 顶层const不受影响，因为拷贝操作不会改变被拷贝对象值
@@ -83,7 +84,7 @@ unique_ptr<int,deleteptr>p(new int,deleteptr());//申明p的删除器类型为de
    const int ci=42;
    i=ci //正确，ci为顶层const，对拷贝操作没影响
    ```
-   2. 底层const在执行对象拷贝时候，const限制不可忽略，拷贝入，拷贝出对象必须要有相同的底层const资格，或者两个对象能够进行数据转化,非常量可以转化为常量，反之不行
+   2. 底层const在执行对象拷贝时候，const限制不可忽略，拷入，拷出对象必须要有相同的底层const资格，或者两个对象能够进行数据转化,非常量可以转化为常量，反之不行
    ```
     int i=0;
     int* const p1=&i; // top level
@@ -103,7 +104,7 @@ unique_ptr<int,deleteptr>p(new int,deleteptr());//申明p的删除器类型为de
 函数参数类型不是模板参数，实参能过进行正常的类型转换(算术转化，派生类->基类，自定义转换等都可以)
 
 --------
-１０/29　星期二
+10/29　星期二
 
 #### 函数指针与实参推断
 
@@ -130,7 +131,7 @@ typename remove_reference<T>::type &&move(T&& t)
 `string s1("ddl"),s2`;
 
 `s2=std::move(s1)`
-首先s1为左值实参，模板类型参数Ｔ被推断为`string&`,
+首先s1为左值实参，经过引用折叠，模板类型参数Ｔ被推断为`string&`,
 因此返回类型就为`T&&`(remove_reference去掉了&)
 再看里面实现，就是用`static_cast`做了静态类型转化。
 一般来说,`static_cast`只能用于其他合法的类型转换，但针对右值引用有一条**特例**: 显式的将一个左值转化为右值引用。就像std::move里面做的,在<>里面显式给出。
@@ -139,8 +140,8 @@ typename remove_reference<T>::type &&move(T&& t)
 这句话什么意思？如果包含了底层const会报什么错？底层const 表示指针所指对象为const
 我写了个测试：
 ```
-const int ci=i;
-const int *  pi=&ci;
+const int ci=i; //顶层常量
+const int *  pi=&ci; //底层常量
 auto res= static_cast<int*>(pi);
 ```
  `error: invalid static_cast from type ‘const int*’ to type ‘int*’`
@@ -156,12 +157,12 @@ auto res= static_cast<double>(d);
 for(size_t i=0;i!=size();++i)
     alloc.construct(dest++,std::move(*elem++));
 ```
-这句话是在干什么呢？表示在dest指向的内存空间，用elem指向的元素构造对象，之所以使用move()，为了将左值转化为右值引用，从而调用移动构造函数，减小内存开销。
+这句话是在干什么呢？表示在dest指向的内存空间，用elem指向的元素构造对象，之所以使用move()，为了将左值转化为右值引用，从而调用移动构造函数，不使用拷贝构造函数，减小内存开销。
 
 --------------------------------
 2019年10月30日 星期三
 
-#### share_ptr
+#### [share_ptr](16.28_share_ptr/main.cpp)
 自己完全实现一个，理解RAII(获得资源即初始化)这个概念
 有一些点需要注意
 1.`share_ptr`需要管理引用计数,因此在拷贝构造，拷贝赋值的时候，需要将引用计数加一，
@@ -192,7 +193,11 @@ const int sz = get_size(); // sz is not a constant expression
 ------
 2019年10月31日  星期四
 
-将之前动态内存管理类重写为模板，并添加emplace_back()P464
+将之前动态内存管理类[vec](16.16/vec.h)重写为模板，
+
+#### 转发参数包
+通过组合使用可变参数模板与forward机制来编写函数，实现将实参不变地传递给其他函数，
+并添加emplace_back()P
 
 #### 模板特例化
 为什么要特例化
@@ -204,7 +209,7 @@ const int sz = get_size(); // sz is not a constant expression
 类模板的部分特例化，本身就是一个模板。也可以特例化参数的一部分特性(&,&&)
 
 定义自己版本的无序容器，hash<Sale_data>,关键字key
-sale_data 是之前类章节里面的，首先需要定义自己的sale_data类
+[sale_data](16.62/sale_data.h) 是之前类章节里面的，首先需要定义自己的sale_data类
 
 做练习16.62时候出现的错误：
 `error C3848: 具有类型“const std::hash<Sales_data>”的表达式会丢失一些 const-volatile 限定符以调用“size_t std::hash<Sales_data>::operator ()(const Sales_data &)”`
