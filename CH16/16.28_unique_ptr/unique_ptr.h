@@ -1,6 +1,3 @@
-//
-// Created by YTB on 2019/10/27.
-//
 
 #ifndef INC_16_28_UNIQUE_PTR_UNIQUE_PTR_H
 #define INC_16_28_UNIQUE_PTR_UNIQUE_PTR_H
