@@ -24,6 +24,5 @@ int main() {
     double  Double=1;
 
 
-
     return 0;
 }

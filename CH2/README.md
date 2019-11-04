@@ -110,3 +110,66 @@ int i = 1024, *p = &i, &r = i;`
 2.int* p1; int* p2;
 ```
 
+#### const 
+>A Reference to const May Refer to an Object That Is Not const
+It is important to realize that a reference to const restricts only what we can do
+through that reference. Binding a reference to const to an object says nothing about
+whether the underlying object itself is const. Because the underlying object might be
+nonconst, it might be changed by other means:
+
+注意表述，reference to const 实际就是 `const type &` 意思，没有指定所引用对象是const
+
+> 常量表达式：Expression that can be evaluated at compile time
+什么时候需要常量表达式？
+
+#### 字面值类型
+能够声明为constexpr的类型是有限制的，常量表达式的值在编译期间就需要确定，这些类型值需要是literal value
+目前接触的算术类型，指针，引用属于字面值类型，标准库里面的`string`则不属于。
+
+```
+const int* p =nullptr; //p->const int
+constexpr int* p=  nullptr //const p -> int
+```
+因为constexpr 对p施加的是顶层const。
+
+#### 类型别名(P60)
+类型别名的替代容易引起误解，看下面一个例子
+```
+typedef char* pstring;
+const pstring sctr=0;
+```
+请问，sctr 的类型是什么?
+如果我们简单的把pstring 用char* 替代那么就变成了
+`const char* sctr=0;`这是不对的，声明语句里面，pstring基本类型是指针,然而带入之后，基本类型为`const char`
+`*`成了声明符的一部分，正确理解应该是这个指针是const,指向char 即 `char* const`
+
+#### auto 类型说明符
+1. auto 定义的变量必须有初始值(不然怎么推断)
+2. auto 使用引用对象的类型作为推断值，其次，top-level const会忽略。
+3. 设置类型为auto的引用或者指针，初始值中的top-level const 存在 eg.
+```
+const int i = 42;
+auto j = i; // int
+const auto &k = i; //const int
+auto *p = &i; //const int*
+```
+#### decltype 类型说明符
+使用情景：我们希望用表达式的类型做推断，这点类似`auto`,但是我们不希望该表达式来初始化变量
+
+与auto的一些区别：
+1. 变量的类型是什么就是什么，顶层const, 引用都不会丢失
+2. decltype((variable)) 结果永远是引用，
+
+#### 定义自己的数据类型
+```
+struct sales_data
+{
+    pass
+};
+```
+类定义的分号`;`不可少，因为类型后面可以紧跟变量名，表示对该类型对象的定义，只是一般来说我们不这么做，
+把类型的定义与该类型对象的定义放在一起不建议。
+
+头文件保护
+>header guard :Preprocessor variable used to prevent a header from being
+included more than once in a single file.
