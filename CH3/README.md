@@ -30,3 +30,44 @@ for( size_t i=0;i<size();i++)
 for(auto &c:string)
 
 如果我们只想访问字符串的部分，有两种办法，下标运算符，迭代器。
+
+### vector
+1. 如何定义以及初始化
+    - 默认初始化 `vector<T>v1`
+    - 拷贝  vector<T>v2=v1,v2(v1);
+    - 初始列表 vetor<T>v3{a,b,c...},v3={};
+
+这些初始化的方式多数时候能过互相使用，但是有几点需要注意
+-  拷贝初始化，只能提供一个初始值
+-  in-class 初始化，只能拷贝初始化或者列表初始化{}
+- 列表初始化只能是{}, `()`error
+
+- in-class initializer 指什么？
+
+- 到底是构建对象还是列表初始化对象？
+一般来说{}，为列表初始化，()用来构建对象，
+但有时候初始化列表里面值与vector里面类型不匹配，此时用该值来构造对象
+```
+vector<int>v1(2); //构建对象，2个元素，默认值为0
+vector<int>v2{2}; //列表初始化，一个元素，值为2
+
+vector<string>s1{10,'a'};//构造
+
+```
+
+2. 添加元素
+push_back(),**注意**在循环体内包含push_back()[改变vector大小]，不能使用范围for
+```
+for(auto v:vector)
+{
+    vector.push_back(element);
+}
+```
+不能用下标形式来添加元素eg.
+```
+vector<int> v;
+for(decltype(v.size())ix=0;ix!=10;++ix ){
+    v[ix]=ix
+}
+```
+`v`是一个空vector,不存在元素，也就不能通过下标运算符访问，下标运算符返回一个引用。
