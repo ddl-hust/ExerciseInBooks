@@ -27,3 +27,28 @@ vector<int> V;
 1. 添加元素
 insert(),一些操作之前没有注意到
 emplce():直接用参数在内存空间构造对象
+
+#### 迭代器失效
+进行insert(),erase()，等改变容器元素的操作都可能让迭代器失效
+在运行时报错`munmap_chunk(): invalid pointer`
+一个问题：存储空间没有从新分配，指向插入位置之前的迭代器有效，插入操作之后的将会失效？
+我的理解是，插入操作导致内存位置在插入点整体向后移动，此时原有的指针指向的位置与元素不对应，但是解引用应该就是之前的值。
+通过编程来验证下。
+```
+int main()
+{
+    vector<int> v{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    cout<<v.size()<<" "<<v.capacity()<<endl;
+    auto begin = v.begin();
+    begin=v.insert(begin,100);
+    cout<<"begin after insert:"<<*begin<<endl;
+    v.insert(begin,1000);
+    cout<<"after insert:"<<v.size()<<" "<<v.capacity()<<endl;
+    cout<<"begin after insert:"<<*begin<<endl;
+    for (auto i : v) cout << i << " ";
+
+    return 0;
+}
+```
+符合预期
+
