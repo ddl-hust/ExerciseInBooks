@@ -22,3 +22,29 @@
 答案是`bind`,bind 接受一个可调用对象，生成一个新的可调用对象。
 `auto newcallable=bind(callable arg_list)`
 
+#### 反向迭代器
+使用：#include<iterator>
+
+应用场景：比如我们需要打印一句话的最后一个单词
+```
+auto recomma =fing(line.crbegin(),line.crend(),',');
+cout<<string(line.crbegin(),recomma)<<endl;
+```
+结果是有问题的，需要先将`recomma`转化为普通迭代器，通过调用`reverse_iterator.base()`
+符合预期的答案：`string(recomma.base(),line.end())`
+注意，反向迭代器调用base()，返回的迭代器与之相邻(P365)
+
+[tag anki]
+error1. 无符号数比较错误
+for (size_t i = vec.size()-1; i >= 0; i--)
+{
+    cout << vec[i];
+}
+
+[tag anki]
+使用普通迭代器逆序打印vector
+遇到的问题： for (auto it = --vec.cend(); it != vec.begin() - 1; it--) cout << *it << " ";
+
+改进：  for (auto iter = v.cend(); iter != v.cbegin();)
+        std::cout << *--iter << " ";
+心得：反向迭代器在做算法题目里面很有效，查找最后元素之类的。
