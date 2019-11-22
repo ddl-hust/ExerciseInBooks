@@ -1,18 +1,14 @@
-//
-// Created by YTB-002 on 2019/11/21.
-//
 
-#ifndef INC_12_19_EX12_19_H
-#define INC_12_19_EX12_19_H
 
 #include <vector>
 #include <string>
 #include <initializer_list>
 #include <iostream>
 #include <memory>
+//添加拷贝构造，拷贝赋值，类值行为
 
 using std::vector;
-using std::string; //之后不要直接引入整个std
+using std::string; 
 
 class StrBlobPtr; //前置声明
 class StrBlob{
@@ -25,6 +21,14 @@ public:
     StrBlob():data(std::make_shared<vector<string>>()){}
     StrBlob(std::initializer_list<string>ls):data(std::make_shared<vector<string>>(ls)){}//注意初始化列表形式
 
+    //*************拷贝控制*******************************
+    StrBlob(const StrBlob& rval):data(new *rval.data){}
+    StrBlob&operator= (const StrBlob& rval){
+        auto newdata = new *rval.data;
+        delete data;
+        data=std::shared_ptr<vector<string>>(newdata);
+        return *this;
+    }
     size_type  size() const { data->size();}
     bool empty()const {return data->empty();}
     string front()
@@ -38,9 +42,9 @@ public:
     void push_back(string s){
         data->push_back(s);
     }
-long count() {
-    return data.use_count(); // and wptr.use_count();
-}
+    long count() {
+        return data.use_count(); // and wptr.use_count();
+    }
 private:
     //辅助函数检查是否越界
     void check(size_type i,const string& msg) const{
@@ -66,8 +70,8 @@ public:
     bool operator !=(const StrBlobPtr& p){return this->curr!=p.curr;}
     //返回引用计数
     long count() {
-    return wptr.use_count(); 
-}
+        return wptr.use_count();
+    }
 private:
     //辅助函数，检查weak_ptr指向的vector是否存在，以及下标是否越界
     std::shared_ptr<vector<string>> check(size_t i,const string& msg) const{
@@ -84,4 +88,4 @@ StrBlobPtr StrBlob::begin() {
     return StrBlobPtr(*this); //ptr默认形参 size=0
 }
 StrBlobPtr StrBlob::end() {return StrBlobPtr(*this,this->size());}
-#endif //INC_12_19_EX12_19_H
+
