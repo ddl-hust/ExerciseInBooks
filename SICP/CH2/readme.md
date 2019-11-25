@@ -182,3 +182,23 @@ problem.
 ```
 > problem of algebraic simplification is complex because, among other reasons, a
 form that may be simplest for one purpose may not be for another.
+
+#### 数据导向编程
+加标签
+(define (attach-tag type-tag contents)
+(cons type-tag contents))
+
+(define (type-tag datum)
+(if (pair? datum)
+(car datum)
+(error "Bad tagged datum: TYPE-TAG" datum)))
+
+(define (contents datum)
+(if (pair? datum)
+(cdr datum)
+(error "Bad tagged datum: CONTENTS" datum)))
+
+判断何种表示方式
+(define (rectangular? z)(eq? (type-tag z) 'rectangular))
+
+(define (polar? z) (eq? (type-tag z) 'polar))
