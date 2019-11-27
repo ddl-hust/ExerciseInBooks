@@ -1,8 +1,11 @@
 #include<string>
 #include<set>
 #include<memory>
+#include<algorithm>
 using std::string;
 class StrVec {
+    friend operator==(const StrVec&,const StrVec&);
+    friend operator!=(const StrVec&, const StrVec&);
 public:
     StrVec(): // the allocator member is default initialized
       elements(nullptr), first_free(nullptr), cap(nullptr) {
@@ -131,4 +134,11 @@ StrVec& StrVec::operator=(const StrVec&& rval){
         rval.elements=rval.first_free=rval.cap=nullptr;
     }
     return *this;
+}
+
+bool operator==(const StrVec&lval,const& StrVec& rval){
+    return (lval.size()==rval.size() && std::equal(lval.begin(),lval.end(),rval.begin()));
+}
+bool operator!=(const StrVec& lval,const StrVec& rval){
+    return !operator==(lval,rval);
 }

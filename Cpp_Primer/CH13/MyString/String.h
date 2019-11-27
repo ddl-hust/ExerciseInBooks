@@ -1,7 +1,16 @@
 #include <memory>
 #include<iostream>
+#include<algorithm>
+class String;
+bool operator==(const String& ,const String& );
+bool operator!=(const String& ,const String& );
+bool operator< (const String&,const String&);
+
 class String {
 public:
+    friend bool operator==(const String& ,const String& );
+    friend bool operator!=(const String& ,const String& );
+    friend bool operator< (const String&,const String&);
     String() : String("") {std::cout<<"String() : String(\"\")"<<std::endl;} //委托构造函数
     String(const char*);
     String(const String&);
@@ -21,11 +30,15 @@ public:
         return *this;
     }
     String& operator=(const String&);
+    char& operator[](size_t n);
+    const char&operator[] (size_t n) const;
     ~String();
 
     const char* c_str() const { return elements; }
     size_t size() const { return end - elements; }
     size_t length() const { return end - elements - 1; }
+    char* begin() const {return elements;}
+    char* ends() const { return  end;}
 
 private:
     std::pair<char*, char*> alloc_n_copy(const char*, const char*);

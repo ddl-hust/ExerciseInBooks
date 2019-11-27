@@ -1,7 +1,6 @@
 #include"String.h"
 #include<vector>
 #include<iostream>
-
 void foo(String x)
 {
     std::cout << x.c_str() << std::endl;
@@ -49,4 +48,10 @@ int main()
     for (const auto& s : svec) {
         std::cout << s.c_str() << std::endl;
     }
+    //test for 关系运算符重载
+    std::cout<<(s1==s2)<<"  "<<(s1<s2);
+
+    String s_("abcd");
+    std::cout<<s_[2]<<" "<<s_[4]<<std::endl;
+    return 0;
 }

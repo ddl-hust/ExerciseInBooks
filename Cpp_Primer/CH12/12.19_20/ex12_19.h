@@ -63,11 +63,43 @@ public:
         ++curr;
         return *this;
     }
+    string& operator*() const {
+        auto p=check(curr,"derefence past end");
+        return (*p)[curr];
+    }
+    //箭头成员访问 为什么返回指针
+    string* operator->() const {
+        return &this->operator*();
+    }
     bool operator !=(const StrBlobPtr& p){return this->curr!=p.curr;}
     //返回引用计数
     long count() {
     return wptr.use_count(); 
 }
+    //前置版本
+    StrBlobPtr& operator++(){
+        check(curr,"increment past end of str");
+        ++curr;
+        return *this;
+    }
+    StrBlobPtr& operator--(){
+        check(curr,"decrement first end of str");
+        --curr;
+        return *this;
+    }
+
+    //后置版本
+    StrBlobPtr operator++(int)
+    {
+        StrBlobPtr res=*this; //返回临时拷贝变量
+        ++*this; //调用前置版本
+        return res;
+    }
+    StrBlobPtr operator--(int){
+        StrBlobPtr res=*this;
+        --*this;
+        return res;
+    }
 private:
     //辅助函数，检查weak_ptr指向的vector是否存在，以及下标是否越界
     std::shared_ptr<vector<string>> check(size_t i,const string& msg) const{
@@ -84,4 +116,20 @@ StrBlobPtr StrBlob::begin() {
     return StrBlobPtr(*this); //ptr默认形参 size=0
 }
 StrBlobPtr StrBlob::end() {return StrBlobPtr(*this,this->size());}
+
+class StrBlobPtr_pointer {
+public:
+    StrBlobPtr_pointer() = default;
+    StrBlobPtr_pointer(StrBlobPtr* p) : pointer(p) {}
+
+    StrBlobPtr& operator*(){
+        return *(this->pointer); //解引用就是获得所指对象
+    }
+    StrBlobPtr* operator->(){
+        return & this->operator*();
+    }
+
+private:
+    StrBlobPtr* pointer = nullptr;
+};
 #endif //INC_12_19_EX12_19_H

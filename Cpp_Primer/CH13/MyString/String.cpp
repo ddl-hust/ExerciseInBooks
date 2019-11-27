@@ -1,5 +1,5 @@
 
-#include"string.h"
+#include"String.h"
 #include<algorithm>
 #include <iostream>
 std::pair<char*, char*> String::alloc_n_copy(const char*b, const char*e){
@@ -49,3 +49,25 @@ String& String::operator=(const String& rval){
     std::cout << "copy assign operator" << std::endl;
     return *this;
 }
+//算术运算符重载
+bool operator==(const String& lval,const String& rval){
+    return (lval.size()==rval.size()&& std::equal(lval.begin(),lval.ends(),rval.begin()));
+}
+bool operator!=(const String& lval,const String& rval){
+    return !operator==(lval,rval);
+}
+
+bool operator<(const String &lval, const String &rval) {
+    return std::lexicographical_compare(lval.begin(),lval.ends(),rval.begin(),rval.ends()); //字典序
+}
+
+char &String::operator[](size_t n) {
+    if(n<end-elements) return elements[n];
+    else throw std::out_of_range("error");
+}
+
+const char &String::operator[](size_t n) const {
+    if(n<end-elements) return elements[n];
+    else throw std::out_of_range("error");
+}
+
